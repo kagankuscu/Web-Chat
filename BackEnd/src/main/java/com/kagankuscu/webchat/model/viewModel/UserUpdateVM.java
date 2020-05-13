@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 public class UserUpdateVM extends UpdateVM {
     @NotEmpty
     @Size(min = 4, max = 15)
-    public String userName;
+    public String username;
 
     @NotEmpty
     public String password;

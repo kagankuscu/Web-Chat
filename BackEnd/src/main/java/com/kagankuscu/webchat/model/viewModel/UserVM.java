@@ -6,6 +6,6 @@ import com.kagankuscu.webchat.common.BaseVM;
  * UserVM
  */
 public class UserVM extends BaseVM {
-    public String userName;
+    public String username;
     public String password;
 }

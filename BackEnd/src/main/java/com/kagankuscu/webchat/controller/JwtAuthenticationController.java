@@ -2,9 +2,7 @@ package com.kagankuscu.webchat.controller;
 
 import com.kagankuscu.webchat.JWT.JwtRequest;
 import com.kagankuscu.webchat.JWT.JwtResponse;
-import com.kagankuscu.webchat.model.domain.UserDTO;
 import com.kagankuscu.webchat.service.JwtUserDetailsService;
-import com.kagankuscu.webchat.service.UserService;
 import com.kagankuscu.webchat.util.JwtTokenUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,7 +44,7 @@ public class JwtAuthenticationController {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         } catch (DisabledException e) {
-            throw new Exception("User_disaled", e);
+            throw new Exception("User_Disabled", e);
         } catch (BadCredentialsException e) {
             throw new Exception("Invalid_credential", e);
         }

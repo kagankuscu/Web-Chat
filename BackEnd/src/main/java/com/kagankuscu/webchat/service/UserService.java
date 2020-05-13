@@ -33,7 +33,7 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
         for (UserDTO record : records) {
             UserVM vm = new UserVM();
             vm.id = record.getId();
-            vm.userName = record.getUserName();
+            vm.username = record.getUsername();
             vm.password = record.getPassword();
 
             results.add(vm);
@@ -56,7 +56,7 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
 
             UserVM vm = new UserVM();
 
-            vm.userName = record.getUserName();
+            vm.username = record.getUsername();
             vm.id = record.getId();
             vm.password = record.getPassword();
 
@@ -67,9 +67,15 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
     }
 
     public ResponseEntity<UserDTO> add(UserAddVM model) {
+
+        UserDTO userDTO = repository.findByUsername(model.username);
+        if (userDTO != null && model.username.equals(userDTO.getUsername())) {
+            return new ResponseEntity<>(userDTO, HttpStatus.FORBIDDEN);
+        }
+
         UserDTO entity = new UserDTO();
 
-        entity.setUserName(model.userName);
+        entity.setUsername(model.username);
         entity.setPassword(model.password);
         repository.save(entity);
         return new ResponseEntity<>(entity, HttpStatus.OK);
@@ -82,7 +88,7 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
         if (repository.existsById(id)) {
             entity = repository.getOne(id);
 
-            entity.setUserName(model.userName);
+            entity.setUsername(model.username);
             entity.setPassword(model.password);
 
             return new ResponseEntity<>(repository.save(entity), HttpStatus.OK);
@@ -111,7 +117,7 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
 
         for (UserDTO record : records) {
             UserVM vm = new UserVM();
-            vm.userName = record.getUserName();
+            vm.username = record.getUsername();
             vm.id = record.getId();
 
             results.add(vm);
@@ -122,6 +128,10 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
         }
 
         return new ResponseEntity<>(results, HttpStatus.OK);
+    }
+
+    public UserDTO getByUsername(String username) {
+        return repository.findByUsername(username);
     }
 
     @Override
