@@ -6,8 +6,12 @@ import com.kagankuscu.webchat.model.viewModel.UserAddVM;
 import com.kagankuscu.webchat.model.viewModel.UserUpdateVM;
 import com.kagankuscu.webchat.model.viewModel.UserVM;
 import com.kagankuscu.webchat.subStructure.IUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,9 +24,11 @@ import java.util.List;
 public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM, UserDTO>, IdValidator {
 
     private final IUserRepository repository;
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(IUserRepository repository) {
+    public UserService(IUserRepository repository, @Lazy PasswordEncoder passwordEncoder) {
         this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -76,7 +82,7 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
         UserDTO entity = new UserDTO();
 
         entity.setUsername(model.username);
-        entity.setPassword(model.password);
+        entity.setPassword(passwordEncoder.encode(model.password));
         repository.save(entity);
         return new ResponseEntity<>(entity, HttpStatus.OK);
 

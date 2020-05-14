@@ -43,10 +43,12 @@
                       <div class="float-left">
                           <button type="submit" [disabled]="submitting" class="btn btn-primary">
                               <span *ngIf="submitting" class="spinner-border spinner-border-sm mr-1"></span>
-                              Login
+                              Sign up
                           </button>
                       </div>
-
+                      <div class="float-right">
+                        <button class="btn btn-success float-right" (click)="cancel()">Cancel</button>
+                    </div>
                   </div>
               </div>
 

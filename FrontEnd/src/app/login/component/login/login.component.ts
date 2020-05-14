@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { User } from 'src/app/model/user/user';
 
 @Component({
@@ -14,8 +18,9 @@ export class LoginComponent implements OnInit {
   submitting = false;
   error = false;
 
+  authentication;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(private formBuilder: FormBuilder, private router: Router, private http: HttpClient) {
 
   }
 
@@ -27,6 +32,7 @@ export class LoginComponent implements OnInit {
   }
 
   register() {
+    this.router.navigate(['/register']);
   }
 
   onSubmit() {
@@ -38,6 +44,20 @@ export class LoginComponent implements OnInit {
       this.submitting = false;
       return;
     }
+
+    const model = this.loginForm.value as User;
+
+    this.http.post<any>('http://localhost:8000/authenticate',  model )
+    .pipe(catchError((error: HttpErrorResponse) => {
+      console.error(error);
+      return of();
+    })).subscribe(data => {
+      if (data) {
+        this.authentication = data;
+        console.log(this.authentication);
+      }
+    });
+
   }
 
   getClass(controlName: string) {
