@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping(path = "/api/users")
 public class UserController {
 
-	private UserService service;
+	private final UserService service;
 
 	public UserController(UserService service) {
 		this.service = service;
@@ -36,6 +36,14 @@ public class UserController {
 	public ResponseEntity<UserVM> getById(@PathVariable Integer id) {
 		return service.getById(id);
 	}
+
+	@GetMapping(path = "/g")
+	public UserDTO getByUserName(@RequestParam String username) {
+		UserDTO userDTO = service.getByUsername(username);
+//		return service.getByUsername(username);
+		return userDTO;
+	}
+
 
 	@PutMapping(path = "/{id}")
 	public ResponseEntity<UserDTO> update(@PathVariable Integer id, @RequestBody @Valid UserUpdateVM userUpdateVM) {

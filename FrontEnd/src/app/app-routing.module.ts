@@ -1,13 +1,18 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { RegisterComponent } from './login/component/register/register.component';
+import { PageNotFoundComponent } from './shared/components/page-not-found/page-not-found.component';
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/login', pathMatch: 'full' },
-  {path: 'register', component: RegisterComponent },
-  {path: 'login', loadChildren: () => import('src/app/login/login.module').then(m => m.LoginModule) },
-  {path: 'chat', loadChildren: () => import('src/app/chat/chat.module').then(m => m.ChatModule) }
+  {path: 'auth', loadChildren: () => import('src/app/authentication/authentication.module').then(m => m.AuthenticationModule) },
+  {path: 'chat', loadChildren: () => import('src/app/chat/chat.module').then(m => m.ChatModule) },
+
+  {
+    path: '',
+    redirectTo: 'chat',
+    pathMatch: 'full'
+  },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({

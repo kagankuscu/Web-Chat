@@ -2,7 +2,6 @@ package com.kagankuscu.webchat.model.viewModel;
 
 import com.kagankuscu.webchat.common.UpdateVM;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 

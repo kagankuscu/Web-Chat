@@ -2,8 +2,12 @@
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
+import { AppMode } from './app-run-mode.enum';
+
 export const environment = {
-  production: false
+  production: false,
+  apiUrl: 'http://localhost:8000/',
+  mode: AppMode.dev
 };
 
 /*

@@ -6,11 +6,9 @@ import com.kagankuscu.webchat.model.viewModel.UserAddVM;
 import com.kagankuscu.webchat.model.viewModel.UserUpdateVM;
 import com.kagankuscu.webchat.model.viewModel.UserVM;
 import com.kagankuscu.webchat.subStructure.IUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -62,8 +60,8 @@ public class UserService implements IBaseService<UserVM, UserAddVM, UserUpdateVM
 
             UserVM vm = new UserVM();
 
-            vm.username = record.getUsername();
             vm.id = record.getId();
+            vm.username = record.getUsername();
             vm.password = record.getPassword();
 
             return new ResponseEntity<>(vm, HttpStatus.OK);
