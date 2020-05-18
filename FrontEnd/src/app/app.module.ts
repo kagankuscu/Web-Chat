@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { ChatModule } from './chat/chat.module';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './authentication/interceptors/auth.interceptor';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { AuthInterceptor } from './authentication/interceptors/auth.interceptor'
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ChatModule
+    ChatModule,
+    SharedModule
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
