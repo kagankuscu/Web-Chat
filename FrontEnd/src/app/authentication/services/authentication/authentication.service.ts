@@ -15,12 +15,12 @@ import { UserModel } from 'src/app/user/model/user.model';
 export class AuthenticationService {
   private authData: AuthDataModel = null;
   private tokenSubject: BehaviorSubject<string>;
-  public tokenObservable$: Observable<string>;
+  public tokenObservable: Observable<string>;
 
   constructor(private http: HttpClient) {
     this.authData = {} as AuthDataModel;
     this.tokenSubject = new BehaviorSubject<string>('');
-    this.tokenObservable$ = this.tokenSubject.asObservable();
+    this.tokenObservable = this.tokenSubject.asObservable();
   }
 
   public login(userModel: LoginModel): Observable<boolean> {
@@ -55,15 +55,12 @@ export class AuthenticationService {
 
                   return null;
                 })).subscribe((user: UserModel) => {
-                  console.log(user);
                   if (user) {
                     this.authData.user = user;
                   } else {
                     this.authData.token = '';
                     return false;
                   }
-
-                  console.log(this.authData);
                 });
 
             if (environment.mode === AppMode.dev) {

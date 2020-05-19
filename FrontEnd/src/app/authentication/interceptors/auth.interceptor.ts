@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
   private tokenData: TokenModel = {token: 'null'};
 
   constructor(private authService: AuthenticationService, private router: Router) {
-    this.authService.tokenObservable$.subscribe(s => this.tokenData.token = s);
+    this.authService.tokenObservable.subscribe(s => this.tokenData.token = s);
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {

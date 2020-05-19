@@ -39,9 +39,7 @@ public class UserController {
 
 	@GetMapping(path = "/g")
 	public UserDTO getByUserName(@RequestParam String username) {
-		UserDTO userDTO = service.getByUsername(username);
-//		return service.getByUsername(username);
-		return userDTO;
+		return service.getByUsername(username);
 	}
 
 

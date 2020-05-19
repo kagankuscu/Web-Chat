@@ -24,16 +24,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthenticationService) {
-    // this.authService.tokenObservable$.pipe(takeUntil(this.unSubscribeSubject)).subscribe(value => this.tokenValue = value);
-    this.authService.tokenObservable$.subscribe(s => this.tokenValue = s);
+    this.authService.tokenObservable.pipe(takeUntil(this.unSubscribeSubject)).subscribe(value => this.tokenValue = value);
   }
 
   ngOnInit(): void {
 
-    console.log('token value: ' + this.tokenValue + 'token:' + this.authService.tokenObservable$);
+    console.log('if outside before' + this.authService);
 
     if (this.tokenValue !== '') {
       this.router.navigate(['chat']);
+      console.log('if inside' + this.tokenValue + 'token:' + this.authService.tokenObservable);
     }
 
     this.loginForm = this.formBuilder.group({
