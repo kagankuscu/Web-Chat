@@ -5,6 +5,7 @@ import { AuthenticationService } from '../../services/authentication/authenticat
 import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoginModel } from '../../models/login.model';
+import { TokenModel } from '../../models/token.model';
 
 @Component({
   selector: 'app-login',
@@ -17,23 +18,26 @@ export class LoginComponent implements OnInit, OnDestroy {
   public submitting = false;
   public error = '';
 
-  public tokenValue = '';
+  public tokenValue: TokenModel = { token: '' };
   private unSubscribeSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthenticationService) {
-    this.authService.tokenObservable.pipe(takeUntil(this.unSubscribeSubject)).subscribe(value => this.tokenValue = value);
+
   }
 
   ngOnInit(): void {
+    this.authService.tokenObservable.subscribe(value => {
+      console.log(value);
+      this.tokenValue.token = value;
+    });
+    // this.tokenValue.token = this.authService.getToken();
+    console.log('sasd ', this.tokenValue);
 
-    console.log('if outside before' + this.authService);
-
-    if (this.tokenValue !== '') {
+    if (this.tokenValue.token) {
       this.router.navigate(['chat']);
-      console.log('if inside' + this.tokenValue + 'token:' + this.authService.tokenObservable);
     }
 
     this.loginForm = this.formBuilder.group({

@@ -16,15 +16,17 @@ import { TokenModel } from '../models/token.model';
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  private tokenData: TokenModel = {token: 'null'};
+  private tokenData: TokenModel = { token: 'null' };
 
   constructor(private authService: AuthenticationService, private router: Router) {
-    this.authService.tokenObservable.subscribe(s => this.tokenData.token = s);
+    this.authService.tokenObservable.subscribe(s => {
+      this.tokenData.token = s;
+      console.log(this.tokenData);
+    }
+    );
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    console.log('INTERCEPTOR');
 
     let headers = new HttpHeaders({
       'Content-Type': 'application/json',
@@ -33,8 +35,10 @@ export class AuthInterceptor implements HttpInterceptor {
       'Access-Control-Allow-Credentials': 'true'
     });
 
+    // const tokenData = this.authService.getToken();
+
     if (!request.headers.has('DontAuthenticate') && this.tokenData) {
-      headers = headers.append('Authorization', 'Bearer ' + this.tokenData.token);
+      headers = headers.append('Authorization', 'Bearer ' + this.tokenData);
     }
 
     const modifiedRequest = request.clone({
@@ -47,7 +51,6 @@ export class AuthInterceptor implements HttpInterceptor {
           if (event instanceof HttpResponse) {
             if (event.status === 401) {
               console.log(event);
-              this.authService.logout();
               this.router.navigate(['/auth/login']);
             }
           }

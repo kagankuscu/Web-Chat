@@ -14,12 +14,11 @@ import { UserModel } from 'src/app/user/model/user.model';
 })
 export class AuthenticationService {
   private authData: AuthDataModel = null;
-  private tokenSubject: BehaviorSubject<string>;
+  private tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
   public tokenObservable: Observable<string>;
 
   constructor(private http: HttpClient) {
-    this.authData = {} as AuthDataModel;
-    this.tokenSubject = new BehaviorSubject<string>('');
+    // this.authData = ;
     this.tokenObservable = this.tokenSubject.asObservable();
   }
 
@@ -40,28 +39,29 @@ export class AuthenticationService {
           return null;
         }), map((data: TokenModel) => {
           if (data && data.token.length > 10) {
+            this.authData = {} as AuthDataModel;
             this.authData.token = data.token;
             this.tokenSubject.next(data.token);
 
             const params = new HttpParams().append('username', userModel.username);
 
-            this.http.get<UserModel>(userUrl, { params })
-              .pipe(
-                catchError((error: HttpErrorResponse) => {
-                  if (error instanceof HttpErrorResponse) {
-                    this.showError(error.message);
-                    return of();
-                  }
+            // this.http.get<UserModel>(userUrl, { params })
+            //   .pipe(
+            //     catchError((error: HttpErrorResponse) => {
+            //       if (error instanceof HttpErrorResponse) {
+            //         this.showError(error.message);
+            //         return of();
+            //       }
 
-                  return null;
-                })).subscribe((user: UserModel) => {
-                  if (user) {
-                    this.authData.user = user;
-                  } else {
-                    this.authData.token = '';
-                    return false;
-                  }
-                });
+            //       return null;
+            //     })).subscribe((user: UserModel) => {
+            //       if (user) {
+            //         this.authData.user = user;
+            //       } else {
+            //         this.authData.token = '';
+            //         return false;
+            //       }
+            //     });
 
             if (environment.mode === AppMode.dev) {
               console.log(this.authData);
@@ -76,10 +76,16 @@ export class AuthenticationService {
 
   public logout() {
     this.authData = {} as AuthDataModel;
-    this.tokenSubject.next(null);
+    // this.tokenSubject.next(null);
+    console.log('log out');
+  }
+
+  public getToken() {
+    return this.authData.token;
   }
 
   private showError(errorText: string): void {
     window.alert(errorText);
   }
+
 }
