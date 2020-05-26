@@ -12,18 +12,12 @@ import { AuthenticationService } from '../services/authentication/authentication
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { TokenModel } from '../models/token.model';
+import { TokenService } from '../services/authentication/token.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-  private tokenData: TokenModel = { token: 'null' };
-
-  constructor(private authService: AuthenticationService, private router: Router) {
-    this.authService.tokenObservable.subscribe(s => {
-      this.tokenData.token = s;
-      console.log(this.tokenData);
-    }
-    );
+  constructor(private tokenService: TokenService, private router: Router) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -35,10 +29,11 @@ export class AuthInterceptor implements HttpInterceptor {
       'Access-Control-Allow-Credentials': 'true'
     });
 
-    // const tokenData = this.authService.getToken();
+    let tokenData;
+    this.tokenService.getToken().subscribe(value => tokenData = value);
 
-    if (!request.headers.has('DontAuthenticate') && this.tokenData) {
-      headers = headers.append('Authorization', 'Bearer ' + this.tokenData);
+    if (!request.headers.has('DontAuthenticate') && tokenData) {
+      headers = headers.append('Authorization', 'Bearer ' + tokenData);
     }
 
     const modifiedRequest = request.clone({

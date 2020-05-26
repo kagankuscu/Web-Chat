@@ -6,6 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoginModel } from '../../models/login.model';
 import { TokenModel } from '../../models/token.model';
+import { TokenService } from '../../services/authentication/token.service';
 
 @Component({
   selector: 'app-login',
@@ -24,16 +25,18 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService: AuthenticationService) {
+    private authService: AuthenticationService,
+    private tokenService: TokenService) {
 
   }
 
   ngOnInit(): void {
-    this.authService.tokenObservable.subscribe(value => {
-      console.log(value);
-      this.tokenValue.token = value;
-    });
+    // this.authService.tokenObservable.subscribe(value => {
+    //   console.log(value);
+    //   this.tokenValue.token = value;
+    // });
     // this.tokenValue.token = this.authService.getToken();
+    this.tokenService.getToken().subscribe(value => this.tokenValue.token = value);
     console.log('sasd ', this.tokenValue);
 
     if (this.tokenValue.token) {

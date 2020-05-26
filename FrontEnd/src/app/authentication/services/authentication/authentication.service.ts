@@ -8,23 +8,21 @@ import { environment } from 'src/environments/environment';
 import { AppMode } from 'src/environments/app-run-mode.enum';
 import { TokenModel } from '../../models/token.model';
 import { UserModel } from 'src/app/user/model/user.model';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
   private authData: AuthDataModel = null;
-  private tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>('');
-  public tokenObservable: Observable<string>;
 
-  constructor(private http: HttpClient) {
-    // this.authData = ;
-    this.tokenObservable = this.tokenSubject.asObservable();
+  constructor(private http: HttpClient, private tokenService: TokenService) {
+
   }
-
   public login(userModel: LoginModel): Observable<boolean> {
     const url = `${environment.apiUrl}authenticate`;
     const userUrl = `${environment.apiUrl}api/users/g`;
+
 
     const authHeader = new HttpHeaders().append('DontAuthenticate', '');
 
@@ -40,8 +38,7 @@ export class AuthenticationService {
         }), map((data: TokenModel) => {
           if (data && data.token.length > 10) {
             this.authData = {} as AuthDataModel;
-            this.authData.token = data.token;
-            this.tokenSubject.next(data.token);
+            this.tokenService.setToken(data.token);
 
             const params = new HttpParams().append('username', userModel.username);
 
@@ -76,7 +73,7 @@ export class AuthenticationService {
 
   public logout() {
     this.authData = {} as AuthDataModel;
-    // this.tokenSubject.next(null);
+    this.tokenService.clearToken();
     console.log('log out');
   }
 
