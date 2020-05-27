@@ -8,6 +8,8 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './authentication/interceptors/auth.interceptor';
 import { SharedModule } from './shared/shared.module';
 import { TokenService } from './authentication/services/authentication/token.service';
+import {StoreModule} from '@ngrx/store';
+import {TokenReducer} from './authentication/ngrx/token.reducer';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,8 @@ import { TokenService } from './authentication/services/authentication/token.ser
     AppRoutingModule,
     HttpClientModule,
     ChatModule,
-    SharedModule
+    SharedModule,
+    StoreModule.forRoot({ token: TokenReducer } )
   ],
   providers: [
     {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true},

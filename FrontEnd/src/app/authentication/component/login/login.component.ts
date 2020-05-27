@@ -2,11 +2,12 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication/authentication.service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { LoginModel } from '../../models/login.model';
 import { TokenModel } from '../../models/token.model';
 import { TokenService } from '../../services/authentication/token.service';
+import { select, Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-login',
@@ -19,15 +20,16 @@ export class LoginComponent implements OnInit, OnDestroy {
   public submitting = false;
   public error = '';
 
-  public tokenValue: TokenModel = { token: '' };
+  public tokenValue: Observable<TokenModel[]>;
   private unSubscribeSubject: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthenticationService,
-    private tokenService: TokenService) {
-
+    private tokenService: TokenService,
+    private store: Store<{ token: TokenModel[] }>) {
+      this.tokenValue = store.pipe(select('token'));
   }
 
   ngOnInit(): void {
@@ -36,12 +38,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     //   this.tokenValue.token = value;
     // });
     // this.tokenValue.token = this.authService.getToken();
-    this.tokenService.getToken().subscribe(value => this.tokenValue.token = value);
-    console.log('sasd ', this.tokenValue);
+    // this.tokenService.getToken().subscribe(value => this.tokenValue.token = value);
 
-    if (this.tokenValue.token) {
-      this.router.navigate(['chat']);
-    }
+    console.log('login', this.tokenValue);
+
+    // if (this.tokenValue.token) {
+    //   this.router.navigate(['chat']);
+    // }
 
     this.loginForm = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],

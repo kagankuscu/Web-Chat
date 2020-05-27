@@ -8,7 +8,6 @@ export class TokenService {
   private tokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
   constructor() {
-    console.log('tokenService');
    }
 
   setToken(s: string) {

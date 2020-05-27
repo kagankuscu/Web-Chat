@@ -5,10 +5,12 @@ import { of, Observable, Subject, BehaviorSubject } from 'rxjs';
 import { AuthDataModel } from '../../models/auth-data.model';
 import { LoginModel } from '../../models/login.model';
 import { environment } from 'src/environments/environment';
+import { Store, select } from '@ngrx/store';
 import { AppMode } from 'src/environments/app-run-mode.enum';
 import { TokenModel } from '../../models/token.model';
 import { UserModel } from 'src/app/user/model/user.model';
 import { TokenService } from './token.service';
+import { TokenAdd } from 'src/app/authentication/ngrx/token.actions';
 
 @Injectable({
   providedIn: 'root'
@@ -16,8 +18,10 @@ import { TokenService } from './token.service';
 export class AuthenticationService {
   private authData: AuthDataModel = null;
 
-  constructor(private http: HttpClient, private tokenService: TokenService) {
+  token: Observable<TokenModel[]>;
 
+  constructor(private http: HttpClient, private tokenService: TokenService, private store: Store<{ token: TokenModel[] }>) {
+    this.token = store.pipe(select('token'));
   }
   public login(userModel: LoginModel): Observable<boolean> {
     const url = `${environment.apiUrl}authenticate`;
@@ -39,26 +43,27 @@ export class AuthenticationService {
           if (data && data.token.length > 10) {
             this.authData = {} as AuthDataModel;
             this.tokenService.setToken(data.token);
+            this.AddToken(data.token);
 
             const params = new HttpParams().append('username', userModel.username);
 
-            // this.http.get<UserModel>(userUrl, { params })
-            //   .pipe(
-            //     catchError((error: HttpErrorResponse) => {
-            //       if (error instanceof HttpErrorResponse) {
-            //         this.showError(error.message);
-            //         return of();
-            //       }
+            this.http.get<UserModel>(userUrl, { params })
+              .pipe(
+                catchError((error: HttpErrorResponse) => {
+                  if (error instanceof HttpErrorResponse) {
+                    this.showError(error.message);
+                    return of();
+                  }
 
-            //       return null;
-            //     })).subscribe((user: UserModel) => {
-            //       if (user) {
-            //         this.authData.user = user;
-            //       } else {
-            //         this.authData.token = '';
-            //         return false;
-            //       }
-            //     });
+                  return null;
+                })).subscribe((user: UserModel) => {
+                  if (user) {
+                    this.authData.user = user;
+                  } else {
+                    this.authData.token = '';
+                    return false;
+                  }
+                });
 
             if (environment.mode === AppMode.dev) {
               console.log(this.authData);
@@ -73,12 +78,19 @@ export class AuthenticationService {
 
   public logout() {
     this.authData = {} as AuthDataModel;
-    this.tokenService.clearToken();
+    // this.tokenService.clearToken();
     console.log('log out');
   }
 
   public getToken() {
     return this.authData.token;
+  }
+
+  public AddToken(tokenData: string) {
+    const tokenValue: TokenModel = { token: '' };
+    tokenValue.token = tokenData;
+
+    this.store.dispatch(new TokenAdd(tokenValue));
   }
 
   private showError(errorText: string): void {
